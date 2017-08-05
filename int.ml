@@ -1,6 +1,7 @@
 open Bool
 open Nat
 
+
 type sign = SZero | Pos | Neg
 type int = IZero | Next of int | Prev of int ;;
 

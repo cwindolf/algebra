@@ -1,6 +1,7 @@
 open Bool
 open Int
 
+
 type num = int
 type den = One | Succ of den
 type rat = num * den
