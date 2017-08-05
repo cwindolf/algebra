@@ -27,28 +27,28 @@ let rec den_of_int (i : int) : den =
 
 let least_terms (p, q : rat) : rat =
     let g = gcd p (int_of_den q) in
-    floordiv p g, den_of_int (floordiv (int_of_den q) g)
+    p // g, den_of_int ((int_of_den q) // g)
 
 
-let (>>) (a, b : rat) (c, d : rat) : bool =
-    (mul a (int_of_den d)) >> (mul c (int_of_den b))
+let ( > ) (a, b : rat) (c, d : rat) : bool =
+    (a * (int_of_den d)) > (c * (int_of_den b))
 
 
-let (<=) (p : rat) (q : rat) : bool = ~~ (p >> q)
+let ( <= ) (p : rat) (q : rat) : bool = ~~ (p > q)
 
 
-let (==) (a, b : rat) (c, d : rat) : bool =
-    (mul a (int_of_den d)) == (mul c (int_of_den b))
+let ( == ) (a, b : rat) (c, d : rat) : bool =
+    (a * (int_of_den d)) == (c * (int_of_den b))
 
 
-let (++) (a, b : rat) (c, d : rat) : rat =
-    add (mul a (int_of_den d)) (mul c (int_of_den b)),
-    den_of_int (mul (int_of_den b) (int_of_den d))
+let ( + ) (a, b : rat) (c, d : rat) : rat =
+    (a * (int_of_den d)) + (c * (int_of_den b)),
+    den_of_int ((int_of_den b) * (int_of_den d))
 
 
-let ( ** ) (a, b : rat) (c, d : rat) : rat =
-    mul a c, den_of_int (mul (int_of_den b) (int_of_den d))
+let ( / ) (a, b : rat) (c, d : rat) : rat =
+    a * (int_of_den d), den_of_int ((int_of_den b) * c)
 
-let (//) (a, b : rat) (c, d : rat) : rat =
-    mul a (int_of_den d), den_of_int (mul (int_of_den b) c)
 
+let ( * ) (a, b : rat) (c, d : rat) : rat =
+    a * c, den_of_int ((int_of_den b) * (int_of_den d))

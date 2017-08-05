@@ -45,30 +45,30 @@ let sgn x =
     | Next _ -> Pos
 
 
-let rec add x y =
+let rec ( + ) x y =
     match x with
     | IZero -> y
-    | Prev z -> add z (dec y)
-    | Next z -> add z (inc y)
+    | Prev z -> z + (dec y)
+    | Next z -> z + (inc y)
 
 
-let sub x y = add x (neg y)
+let ( - ) x y = x + (neg y)
 
 
-let mul x y =
+let ( * ) x y =
     let rec helper x y z =
         match x with
         | IZero -> z
-        | Prev a -> helper a y (sub z y)
-        | Next a -> helper a y (add z y)
+        | Prev a -> helper a y (z - y)
+        | Next a -> helper a y (z + y)
     in helper x y IZero
 
 
-let floordiv x y =
+let ( // ) x y =
     let rec helper c x y =
         match sgn x with
         | SZero | Neg -> c
-        | Pos -> helper (inc c) (sub x y) y in 
+        | Pos -> helper (inc c) (x - y) y in 
     match sgn x, sgn y with
     | SZero, _ -> IZero
     | _, SZero -> raise (Failure "divide by zero")
@@ -78,7 +78,7 @@ let floordiv x y =
     | Pos, Neg -> neg (helper IZero x (neg y))
 
 
-let (%%) x y = sub x (mul y (floordiv x y))
+let ( %% ) x y = x - (y * (x // y))
 
 
 let rec gcd x y =
@@ -87,7 +87,7 @@ let rec gcd x y =
     | _ -> gcd y (x %% y)
 
 
-let lcm x y = floordiv (mul x y) (gcd x y)
+let lcm x y = (x * y) // (gcd x y)
 
 
 let relprime x y =
@@ -107,10 +107,10 @@ let abs_as_nat (i : int) : nat =
     | Neg -> nat_of_pos_int (neg i) NZero
     | Pos -> nat_of_pos_int i NZero
 
-let (>>) (p : int) (q : int) : bool =
+let ( > ) (p : int) (q : int) : bool =
     match sgn p, sgn q with
-    | Pos, Pos -> (abs_as_nat p) >> (abs_as_nat q)
-    | Neg, Neg -> (abs_as_nat (neg q)) >> (abs_as_nat (neg p))
+    | Pos, Pos -> (abs_as_nat p) > (abs_as_nat q)
+    | Neg, Neg -> (abs_as_nat (neg q)) > (abs_as_nat (neg p))
     | Pos, _ -> True
     | Neg, _ -> False
     | SZero, Pos -> False
@@ -118,10 +118,10 @@ let (>>) (p : int) (q : int) : bool =
     | SZero, Neg -> True
 
 
-let (<=) (p : int) (q : int) : bool = ~~ (p >> q)
+let ( <= ) (p : int) (q : int) : bool = ~~ (p > q)
 
 
-let (==) (p : int) (q : int) : bool =
+let ( == ) (p : int) (q : int) : bool =
     match sgn p, sgn q with
     | SZero, SZero -> True
     | Pos, Pos | Neg, Neg -> Nat.((abs_as_nat p) == (abs_as_nat q))
