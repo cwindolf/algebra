@@ -1,1 +1,1 @@
-Reimplementing the basic types in OCaml. Don't use this.
+Very naive implementation of exact rational arithmetic in OCaml. Don't use this.
