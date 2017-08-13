@@ -5,6 +5,35 @@ open Cnt
 type nat = NZero | Nat of cnt
 
 
+let ( == ) (a : nat) (b : nat) : bool =
+    match a, b with
+    | NZero, NZero -> True
+    | Nat x, Nat y -> Cnt.(x == y)
+    | _, _ -> False
+
+
+let ( > ) (a : nat) (b : nat) : bool =
+    match a, b with
+    | NZero, _ -> False
+    | _, NZero -> True
+    | Nat x, Nat y -> Cnt.(x > y)
+
+
+let ( < ) (a : nat) (b : nat) : bool =
+    match a, b with
+    | NZero, Nat _ -> True
+    | _, NZero -> False
+    | Nat x, Nat y -> Cnt.(x < y)
+
+
+let ( <= ) (a : nat) (b : nat) : bool =
+    ~~ (a > b)
+
+
+let ( >= ) (a : nat) (b : nat) : bool =
+    ~~ (a < b)
+
+
 let inc (n : nat) : nat =
     match n with
     | NZero -> Nat One
@@ -24,42 +53,13 @@ let ( * ) (a : nat) (b : nat) : nat =
     | Nat x, Nat y -> Nat Cnt.(x * y)
 
 
-let ( > ) (a : nat) (b : nat) : bool =
-    match a, b with
-    | NZero, _ -> False
-    | _, NZero -> True
-    | Nat x, Nat y -> Cnt.(x > y)
-
-
-let ( < ) (a : nat) (b : nat) : bool =
-    match a, b with
-    | NZero, Nat _ -> True
-    | _, NZero -> False
-    | Nat x, Nat y -> Cnt.(x < y)
-
-
-let ( == ) (a : nat) (b : nat) : bool =
-    match a, b with
-    | NZero, NZero -> True
-    | Nat x, Nat y -> Cnt.(x == y)
-    | _, _ -> False
-
-
-let ( <= ) (a : nat) (b : nat) : bool =
-    ~~ (a > b)
-
-
-let ( >= ) (a : nat) (b : nat) : bool =
-    ~~ (a < b)
-
-
 let ( // ) (a : nat) (b : cnt) : nat =
     let b = Nat b in
     let rec floordiv_helper q acc =
-        match acc < a with
+        match acc <= a with
         | True -> floordiv_helper (inc q) (acc + b)
         | False -> q
-    in floordiv_helper NZero NZero
+    in floordiv_helper NZero b
 
 
 let rec ( - ) (a : nat) (b : nat) : nat =
@@ -73,22 +73,24 @@ let rec ( - ) (a : nat) (b : nat) : nat =
     | Nat (S x), Nat (S y) -> Nat x - Nat y
 
 
-let rec ( % ) (a : nat) (b : nat) : nat =
-    match a < b with
+let rec ( % ) (a : nat) (b : cnt) : nat =
+    let bb = Nat b in
+    match a < bb with
     | True -> a
-    | False -> (a - b) % b
+    | False -> (a - bb) % b
 
 
-let euc (a : nat) (b : nat) : nat * nat =
+let euc (a : nat) (b : cnt) : nat * nat =
+    let bb = Nat b in
     let rec euc_helper q r =
-        match r < b with
+        match r < bb with
         | True -> q, r
-        | False -> euc_helper (inc q) (r - b)
+        | False -> euc_helper (inc q) (r - bb)
     in euc_helper NZero a
 
 
 let rec to_str x : string =
-    let ten = Nat (S (S (S (S (S (S (S (S (S One))))))))) in
+    let ten = S (S (S (S (S (S (S (S (S One)))))))) in
     match x with
     | NZero -> "0"
     | Nat One -> "1"
