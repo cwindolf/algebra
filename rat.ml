@@ -1,55 +1,76 @@
 open Bool
+open Cnt
 open Int
+open Util
 
 
-type num = int
-type den = One | Succ of den
-type rat = num * den
-
-
-let sgn (p, _ : rat) : sign = sgn p
-
-
-let rec int_of_den (d : den) : int =
-    match d with
-    | One -> Next IZero
-    | Succ e -> Next (int_of_den e)
-
-
-let rec den_of_int (i : int) : den =
-    match Int.sgn i with
-    | Neg | SZero -> raise (Failure "bad denominator...")
-    | Pos ->
-        match i with
-        | Next IZero -> One
-        | Next p -> Succ (den_of_int p)
-        | _ -> raise (Failure "unreachable")
+type rat = int * cnt
 
 
 let least_terms (p, q : rat) : rat =
-    let g = gcd p (int_of_den q) in
-    p // g, den_of_int ((int_of_den q) // g)
+    (* TODO: There are probably some edge cases to be fixed here. *)
+    let g = gcd p (Pos q) in
+    let Pos denominator = ((Pos q) // g) in
+    p // g, denominator
 
 
 let ( > ) (a, b : rat) (c, d : rat) : bool =
-    (a * (int_of_den d)) > (c * (int_of_den b))
+    (a * (Pos d)) > (c * (Pos b))
 
 
 let ( <= ) (p : rat) (q : rat) : bool = ~~ (p > q)
 
 
 let ( == ) (a, b : rat) (c, d : rat) : bool =
-    (a * (int_of_den d)) == (c * (int_of_den b))
+    (a * Pos d) == (c * Pos b)
 
 
 let ( + ) (a, b : rat) (c, d : rat) : rat =
-    (a * (int_of_den d)) + (c * (int_of_den b)),
-    den_of_int ((int_of_den b) * (int_of_den d))
+    (a * Pos d) + (c * Pos b), Cnt.(b * d)
+
+
+let ( - ) (a, b : rat) (c, d : rat) : rat =
+    (a * Pos d) - (c * Pos b), Cnt.(b * d)
 
 
 let ( / ) (a, b : rat) (c, d : rat) : rat =
-    a * (int_of_den d), den_of_int ((int_of_den b) * c)
+    let Pos denominator = Pos b * c in
+    least_terms (a * Pos d, denominator)
 
 
 let ( * ) (a, b : rat) (c, d : rat) : rat =
-    a * c, den_of_int ((int_of_den b) * (int_of_den d))
+    least_terms (a * c, Cnt.(b * d))
+
+
+let of_int (i : int) : rat =
+    (* The ususal embedding. *)
+    i, One
+
+
+let abs (p, q : rat) =
+    match p with
+    | Neg _ -> Int.neg p, q
+    | _ -> p, q
+
+
+let floor (a, b : rat) : int =
+    Int.((Pos b) * (a // (Pos b)))
+
+
+let frac (p : rat) : rat = 
+    (* This might not always be what you want for negative numbers,
+     * but it helps with printing. *)
+    (abs p) - (of_int @@ floor (abs p))
+
+
+let to_frac_str (r : rat) : string =
+    let p, q = least_terms r in
+    (Int.to_str p) ^ "/" ^ (Int.to_str (Pos q))
+
+
+let to_dec_str ?(prec = (S (S One))) (r : rat) : string =
+    (* Print whole integer part and `prec` places of fractional part. *)
+    (Int.to_str (floor r))
+    ^ "."
+    ^ (Int.to_str (floor @@ (frac r) * (of_int (Pos prec))))
+

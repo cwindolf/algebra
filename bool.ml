@@ -24,3 +24,7 @@ let ( == ) (a : bool) (b : bool) : bool =
     match a, b with
     | True, False | False, True -> True
     | _, _ -> False
+
+let to_str = function
+      True -> "True"
+    | False -> "False"
