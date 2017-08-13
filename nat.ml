@@ -80,13 +80,15 @@ let rec ( % ) (a : nat) (b : cnt) : nat =
     | False -> (a - bb) % b
 
 
-let euc (a : nat) (b : cnt) : nat * nat =
-    let bb = Nat b in
-    let rec euc_helper q r =
-        match r < bb with
-        | True -> q, r
-        | False -> euc_helper (inc q) (r - bb)
-    in euc_helper NZero a
+let euc (a : nat) (b : nat) : nat * nat =
+    match b with
+    | NZero -> NZero, a
+    | Nat _ ->
+        let rec euc_helper q r =
+            match r < b with
+            | True -> q, r
+            | False -> euc_helper (inc q) (r - b)
+        in euc_helper NZero a
 
 
 let rec to_str x : string =
