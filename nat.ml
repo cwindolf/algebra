@@ -92,7 +92,7 @@ let euc (a : nat) (b : nat) : nat * nat =
 
 
 let rec to_str x : string =
-    let ten = S (S (S (S (S (S (S (S (S One)))))))) in
+    let ten = Nat (S (S (S (S (S (S (S (S (S One))))))))) in
     match x with
     | NZero -> "0"
     | Nat One -> "1"
