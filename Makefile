@@ -1,19 +1,20 @@
+OCAMLC=ocamlopt
+FLAGS=-w +A-4-44
 MLS=bool.ml cnt.ml nat.ml int.ml util.ml rat.ml
-CMOS=util.cmo bool.cmo cnt.cmo nat.cmo int.cmo rat.cmo
+CMXS=util.cmx bool.cmx cnt.cmx nat.cmx int.cmx rat.cmx
 
 lib:
-	ocamlc -verbose -w +A-4-44 $(MLS)
+	$(OCAMLC) $(FLAGS) $(MLS)
 
 
 pi:
-	make lib
-	ocamlc -verbose -w +A-4 $(CMOS) pi.ml -o pi
+	$(OCAMLC) $(FLAGS) $(MLS) pi.ml -o pi
 
 
 clean:
-	rm -f a.out *.cmi *.cmo pi test
+	rm -f a.out *.cmi *.cmo *.cmx *.o *.dump pi test
 
 
 test:
-	ocamlc -verbose -g -w +A-4-44 $(MLS)
-	ocamlc -verbose -g -w +A-4 $(CMOS) test.ml -o test
+	$(OCAMLC) $(FLAGS) $(MLS)
+	$(OCAMLC) $(FLAGS) $(CMXS) test.ml -o test
