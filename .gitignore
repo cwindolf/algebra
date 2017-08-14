@@ -4,3 +4,5 @@ test
 *.cmi
 *.cmo
 *.cma
+*.cmx
+*.o
