@@ -1,14 +1,14 @@
 OCAMLC=ocamlopt
 FLAGS=-w +A-4-44
-MLS=bool.ml cnt.ml nat.ml int.ml util.ml rat.ml
-CMXS=util.cmx bool.cmx cnt.cmx nat.cmx int.cmx rat.cmx
+LIB_MLS=bool.ml cnt.ml nat.ml int.ml util.ml rat.ml
+
 
 lib:
-	$(OCAMLC) $(FLAGS) $(MLS)
+	$(OCAMLC) $(FLAGS) $(LIB_MLS)
 
 
 pi:
-	$(OCAMLC) $(FLAGS) $(MLS) pi.ml -o pi
+	$(OCAMLC) $(FLAGS) $(LIB_MLS) pi.ml -o pi
 
 
 clean:
@@ -16,5 +16,4 @@ clean:
 
 
 test:
-	$(OCAMLC) $(FLAGS) $(MLS)
-	$(OCAMLC) $(FLAGS) $(CMXS) test.ml -o test
+	$(OCAMLC) $(FLAGS) $(LIB_MLS) test.ml -o test
