@@ -81,14 +81,13 @@ let rec ( % ) (a : nat) (b : cnt) : nat =
 
 
 let euc (a : nat) (b : nat) : nat * nat =
+    let rec euc_helper q r =
+        match r < b with
+        | True -> q, r
+        | False -> euc_helper (inc q) (r - b) in
     match b with
     | NZero -> NZero, a
-    | Nat _ ->
-        let rec euc_helper q r =
-            match r < b with
-            | True -> q, r
-            | False -> euc_helper (inc q) (r - b)
-        in euc_helper NZero a
+    | Nat _ -> euc_helper NZero a
 
 
 let rec to_str x : string =
@@ -104,4 +103,7 @@ let rec to_str x : string =
     | Nat S S S S S S One -> "7"
     | Nat S S S S S S S One -> "8"
     | Nat S S S S S S S S One -> "9"
-    | x -> let q, r = euc x ten in (to_str q) ^ (to_str r)
+    | x -> let q, r = euc ten x in (to_str q) ^ (to_str r)
+
+
+let sixteen = Nat Cnt.sixteen
