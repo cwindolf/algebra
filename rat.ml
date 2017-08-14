@@ -59,7 +59,8 @@ let floor (a, b : rat) : int =
 
 let frac (p : rat) : rat = 
     (* This might not always be what you want for negative numbers,
-     * but it helps with printing. *)
+     * but it helps with printing.
+     * e.g. frac -3.14 = .14 *)
     (abs p) - (of_int @@ floor (abs p))
 
 
