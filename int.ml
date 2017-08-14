@@ -3,7 +3,36 @@ open Nat
 open Cnt
 
 
-type int = IZero | Pos of cnt | Neg of cnt ;;
+type int = IZero | Pos of cnt | Neg of cnt
+
+
+let ( == ) (p : int) (q : int) : bool =
+    match p, q with
+    | IZero, IZero -> True
+    | Pos x, Pos y | Neg x, Neg y -> Nat.(Nat x == Nat y)
+    | _, _ -> False
+
+
+let ( > ) (p : int) (q : int) : bool =
+    match p, q with
+    | IZero, Neg _ | Pos _, IZero | Pos _, Neg _ -> True
+    | IZero, _ | Neg _, IZero | Neg _, Pos _ -> False
+    | Pos x, Pos y -> Nat.(Nat x > Nat y)
+    | Neg x, Neg y -> Nat.(Nat x < Nat y)
+
+
+let ( < ) (p : int) (q : int) : bool =
+    match p, q with
+    | Neg _, IZero | Neg _, Pos _ | IZero, Pos _ -> True
+    | Pos _, IZero | Pos _, Neg _ | IZero, _ -> False
+    | Pos x, Pos y -> Nat.(Nat x < Nat y)
+    | Neg x, Neg y -> Nat.(Nat x > Nat y)
+
+
+let ( <= ) (p : int) (q : int) : bool = ~~ (p > q)
+
+
+let ( >= ) (p : int) (q : int) : bool = ~~ (p < q)
 
 
 let inc x =
@@ -42,6 +71,7 @@ let abs x =
 
 
 let rec ( + ) x y =
+    (* O(x) *)
     match x with
     | IZero -> y
     | Neg One -> dec y
@@ -93,26 +123,14 @@ let abs_as_nat (i : int) : nat =
     | Pos c -> Nat c
 
 
-let ( > ) (p : int) (q : int) : bool =
-    match p, q with
-    | IZero, Neg _ | Pos _, IZero | Pos _, Neg _ -> True
-    | IZero, _ | Neg _, IZero | Neg _, Pos _ -> False
-    | Pos x, Pos y -> Nat.(Nat x > Nat y)
-    | Neg x, Neg y -> Nat.(Nat x < Nat y)
-
-
-let ( <= ) (p : int) (q : int) : bool = ~~ (p > q)
-
-
-let ( == ) (p : int) (q : int) : bool =
-    match p, q with
-    | IZero, IZero -> True
-    | Pos x, Pos y | Neg x, Neg y -> Nat.(Nat x == Nat y)
-    | _, _ -> False
-
-
 let to_str x : string =
     match x with
     | Neg y -> "-" ^ (to_str @@ Nat y)
     | IZero -> "0"
     | Pos y -> to_str @@ Nat y
+
+
+let one = Pos Cnt.One
+let two = Pos (S Cnt.One)
+let three = Pos (S (S Cnt.One))
+let four = Pos (S (S (S Cnt.One)))
