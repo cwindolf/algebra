@@ -14,7 +14,7 @@ let check (expr : bool) (name : string) : bool =
         False
 
 
-let raises (expr : bool lazy_t) (name : string) : bool =
+let raises (expr : bool Lazy.t) (name : string) : bool =
     try
         let _ = Lazy.force expr in check False name
     with
