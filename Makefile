@@ -17,3 +17,11 @@ clean:
 
 test:
 	$(OCAMLC) $(FLAGS) $(LIB_MLS) test.ml -o test
+
+
+dopi:
+	make clean && make pi && ./pi
+
+
+dotest:
+	make clean && make test && ./test
