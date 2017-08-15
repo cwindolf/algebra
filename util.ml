@@ -1,21 +1,18 @@
-open Bool
-
-
 let ( @@ ) f x = f x
 
 
 let check (expr : bool) (name : string) : bool =
     match expr with
-    | True ->
+    | true ->
         let _ = print_endline @@ "  OK   : " ^ name ^ " passed." in
-        True
-    | False ->
+        true
+    | false ->
         let _ = print_endline @@ "~FAIL~ : " ^ name ^ " failed" in
-        False
+        false
 
 
 let raises (expr : bool Lazy.t) (name : string) : bool =
     try
-        let _ = Lazy.force expr in check False name
+        let _ = Lazy.force expr in check false name
     with
-    | _ -> check True name
+    | _ -> check true name

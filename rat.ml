@@ -1,4 +1,3 @@
-open Bool
 open Cnt
 open Int
 open Util
@@ -10,15 +9,14 @@ type rat = int * cnt
 let least_terms (p, q : rat) : rat =
     (* TODO: There are probably some edge cases to be fixed here. *)
     let g = gcd p (Pos q) in
-    let Pos denominator = ((Pos q) // g) in
-    p // g, denominator
+    p // g, Int.as_cnt ((Pos q) // g)
 
 
 let ( > ) (a, b : rat) (c, d : rat) : bool =
     (a * (Pos d)) > (c * (Pos b))
 
 
-let ( <= ) (p : rat) (q : rat) : bool = ~~ (p > q)
+let ( <= ) (p : rat) (q : rat) : bool = not (p > q)
 
 
 let ( == ) (a, b : rat) (c, d : rat) : bool =
@@ -34,8 +32,7 @@ let ( - ) (a, b : rat) (c, d : rat) : rat =
 
 
 let ( / ) (a, b : rat) (c, d : rat) : rat =
-    let Pos denominator = Pos b * c in
-    least_terms (a * Pos d, denominator)
+    least_terms (a * Pos d, Int.as_cnt (Pos b * c))
 
 
 let ( * ) (a, b : rat) (c, d : rat) : rat =
@@ -75,3 +72,9 @@ let to_dec_str ?(prec = (S (S One))) (r : rat) : string =
     ^ "."
     ^ (Int.to_str (floor @@ (frac r) * (of_int (Pos prec))))
 
+
+let print r = r |> to_dec_str |> print_endline
+
+
+let one = Int.one, Cnt.One
+let two = Int.two, Cnt.One

@@ -1,6 +1,6 @@
 OCAMLC=ocamlopt
-FLAGS=-w +A-4-44
-LIB_MLS=bool.ml cnt.ml nat.ml int.ml util.ml rat.ml
+FLAGS=-w +A-4-44-48
+LIB_MLS=cnt.ml nat.ml int.ml util.ml rat.ml
 
 
 lib:

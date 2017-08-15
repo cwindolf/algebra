@@ -1,4 +1,3 @@
-open Bool
 open Cnt
 
 
@@ -7,37 +6,44 @@ type nat = NZero | Nat of cnt
 
 let ( == ) (a : nat) (b : nat) : bool =
     match a, b with
-    | NZero, NZero -> True
+    | NZero, NZero -> true
     | Nat x, Nat y -> Cnt.(x == y)
-    | _, _ -> False
+    | _, _ -> false
 
 
 let ( > ) (a : nat) (b : nat) : bool =
     match a, b with
-    | NZero, _ -> False
-    | _, NZero -> True
+    | NZero, _ -> false
+    | _, NZero -> true
     | Nat x, Nat y -> Cnt.(x > y)
 
 
 let ( < ) (a : nat) (b : nat) : bool =
     match a, b with
-    | NZero, Nat _ -> True
-    | _, NZero -> False
+    | NZero, Nat _ -> true
+    | _, NZero -> false
     | Nat x, Nat y -> Cnt.(x < y)
 
 
 let ( <= ) (a : nat) (b : nat) : bool =
-    ~~ (a > b)
+    not (a > b)
 
 
 let ( >= ) (a : nat) (b : nat) : bool =
-    ~~ (a < b)
+    not (a < b)
 
 
 let inc (n : nat) : nat =
     match n with
     | NZero -> Nat One
     | Nat x -> Nat (S x)
+
+
+let dec (n : nat) : nat =
+    match n with
+    | NZero -> failwith "Nat.dec of zero"
+    | Nat One -> NZero
+    | Nat S x -> Nat x
 
 
 let ( + ) (a : nat) (b : nat) : nat =
@@ -57,8 +63,8 @@ let ( // ) (a : nat) (b : cnt) : nat =
     let b = Nat b in
     let rec floordiv_helper q acc =
         match acc <= a with
-        | True -> floordiv_helper (inc q) (acc + b)
-        | False -> q
+        | true -> floordiv_helper (inc q) (acc + b)
+        | false -> q
     in floordiv_helper NZero b
 
 
@@ -76,15 +82,15 @@ let rec ( - ) (a : nat) (b : nat) : nat =
 let rec ( % ) (a : nat) (b : cnt) : nat =
     let bb = Nat b in
     match a < bb with
-    | True -> a
-    | False -> (a - bb) % b
+    | true -> a
+    | false -> (a - bb) % b
 
 
 let euc (a : nat) (b : nat) : nat * nat =
     let rec euc_helper q r =
         match r < b with
-        | True -> q, r
-        | False -> euc_helper (inc q) (r - b) in
+        | true -> q, r
+        | false -> euc_helper (inc q) (r - b) in
     match b with
     | NZero -> NZero, a
     | Nat _ -> euc_helper NZero a
@@ -105,5 +111,10 @@ let rec to_str x : string =
     | Nat S S S S S S S S One -> "9"
     | x -> let q, r = euc ten x in (to_str q) ^ (to_str r)
 
+let as_cnt n =
+    match n with
+    | Nat c -> c
+    | NZero -> failwith "Bad Nat.as_cnt"
 
+let two = Nat Cnt.two
 let sixteen = Nat Cnt.sixteen

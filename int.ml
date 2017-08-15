@@ -1,4 +1,3 @@
-open Bool
 open Nat
 open Cnt
 
@@ -8,31 +7,31 @@ type int = IZero | Pos of cnt | Neg of cnt
 
 let ( == ) (p : int) (q : int) : bool =
     match p, q with
-    | IZero, IZero -> True
+    | IZero, IZero -> true
     | Pos x, Pos y | Neg x, Neg y -> Nat.(Nat x == Nat y)
-    | _, _ -> False
+    | _, _ -> false
 
 
 let ( > ) (p : int) (q : int) : bool =
     match p, q with
-    | IZero, Neg _ | Pos _, IZero | Pos _, Neg _ -> True
-    | IZero, _ | Neg _, IZero | Neg _, Pos _ -> False
+    | IZero, Neg _ | Pos _, IZero | Pos _, Neg _ -> true
+    | IZero, _ | Neg _, IZero | Neg _, Pos _ -> false
     | Pos x, Pos y -> Nat.(Nat x > Nat y)
     | Neg x, Neg y -> Nat.(Nat x < Nat y)
 
 
 let ( < ) (p : int) (q : int) : bool =
     match p, q with
-    | Neg _, IZero | Neg _, Pos _ | IZero, Pos _ -> True
-    | Pos _, IZero | Pos _, Neg _ | IZero, _ -> False
+    | Neg _, IZero | Neg _, Pos _ | IZero, Pos _ -> true
+    | Pos _, IZero | Pos _, Neg _ | IZero, _ -> false
     | Pos x, Pos y -> Nat.(Nat x < Nat y)
     | Neg x, Neg y -> Nat.(Nat x > Nat y)
 
 
-let ( <= ) (p : int) (q : int) : bool = ~~ (p > q)
+let ( <= ) (p : int) (q : int) : bool = not (p > q)
 
 
-let ( >= ) (p : int) (q : int) : bool = ~~ (p < q)
+let ( >= ) (p : int) (q : int) : bool = not (p < q)
 
 
 let inc x =
@@ -70,6 +69,13 @@ let abs x =
     | _ -> x
 
 
+let abs_as_nat (i : int) : nat =
+    match i with
+    | IZero -> NZero
+    | Neg c -> Nat c
+    | Pos c -> Nat c
+
+
 let rec ( + ) x y =
     (* O(x) *)
     match x with
@@ -90,37 +96,51 @@ let ( * ) x y =
     | Neg xx, Pos yy | Pos xx, Neg yy -> Neg (xx * yy)
 
 
-let ( // ) (x : int) (y : int) : int =
+let rec euc (x : int) (y : int) : int * int =
     match x, y with
     | _, IZero -> raise (Failure "Divide by zero.")
-    | IZero, _ -> IZero
-    | Pos xx, Pos yy | Neg xx, Neg yy -> of_nat Nat.(Nat xx // yy)
-    | Neg xx, Pos yy | Pos xx, Neg yy -> neg @@ of_nat Nat.(Nat xx // yy)
+    | _, Neg b ->
+        let q, r = euc x (Pos b) in neg q, r
+    | Neg a, _ ->
+        let q, r = euc (Pos a) y in
+        (match r with
+         | IZero -> neg q, IZero
+         | _ -> neg q, neg r)
+    | _, Pos b ->
+        let nq, nr = Nat.euc (abs_as_nat x) (Nat b) in
+        of_nat nq, of_nat nr
 
 
-let ( % ) x y = x - (y * (x // y))
+let ( // ) (x : int) (y : int) : int =
+    let q, _ = euc x y in q
+
+
+let ( % ) (x : int) (y : int) : int =
+    let _, r = euc x y in r
 
 
 let rec gcd x y =
     match y with
-    | IZero -> x
+    | IZero -> abs x
     | _ -> gcd y (x % y)
 
 
-let lcm x y = (x * y) // (gcd x y)
+let lcm x y =
+    match y with
+    | IZero -> IZero
+    | _ -> (abs (x * y)) // (gcd x y)
 
 
 let relprime x y =
     match gcd x y with
-    | Pos One -> True
-    | _ -> False
+    | Pos One -> true
+    | _ -> false
 
 
-let abs_as_nat (i : int) : nat =
+let as_cnt (i : int) : cnt =
     match i with
-    | IZero -> NZero
-    | Neg c -> Nat c
-    | Pos c -> Nat c
+    | Pos denominator -> denominator
+    | Neg _ | IZero -> failwith "Int.as_cnt of zero or negative."
 
 
 let to_str x : string =
@@ -128,6 +148,9 @@ let to_str x : string =
     | Neg y -> "-" ^ (to_str @@ Nat y)
     | IZero -> "0"
     | Pos y -> to_str @@ Nat y
+
+
+let print x = x |> to_str |> print_endline
 
 
 let one = Pos Cnt.One

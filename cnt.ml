@@ -1,6 +1,3 @@
-open Bool
-
-
 type cnt = One | S of cnt
 
 
@@ -33,29 +30,30 @@ let ( ** ) (n : cnt) (k : cnt) : cnt =
 
 let rec ( > ) (a : cnt) (b : cnt) : bool =
     match a, b with
-    | One, _ -> False
-    | _, One -> True
+    | One, _ -> false
+    | _, One -> true
     | S x, S y -> x > y
 
 
 let rec ( < ) (a : cnt) (b : cnt) : bool =
     match a, b with
-    | One, S _ -> True
-    | _, One -> False
+    | One, S _ -> true
+    | _, One -> false
     | S x, S y -> x < y
 
 
 let rec ( == ) (a : cnt) (b : cnt) : bool =
     match a, b with
-    | One, One -> True
+    | One, One -> true
     | S x, S y -> x == y
-    | _, _ -> False
+    | _, _ -> false
 
 
-let ( >= ) a b = ~~(a < b)
+let ( >= ) a b = not (a < b)
 
-let four = S (S (S (S One)))
-let five = S (S (S (S (S One))))
-let six = S (S (S (S (S (S One)))))
-let eight = S (S (S (S (S (S (S (S One)))))))
-let sixteen = S (S (S (S (S (S (S (S (S (S (S (S (S (S (S (S One)))))))))))))))
+let two = S One
+let four = S (S (S One))
+let five = S (S (S (S One)))
+let six = S (S (S (S (S One))))
+let eight = S (S (S (S (S (S (S One))))))
+let sixteen = S (S (S (S (S (S (S (S (S (S (S (S (S (S (S One))))))))))))))
