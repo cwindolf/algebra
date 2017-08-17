@@ -52,25 +52,22 @@ let test_nat =
     let open Nat in
     (* == *)
     (check (NZero == NZero) "0=0") &&
-    (check (not (Nat (Cnt.S one) == NZero)) "2!=0") &&
-    (check (Nat one == Nat one) "1=1") &&
+    (check (not (Nat.two == NZero)) "2!=0") &&
+    (check (Nat.one == Nat.one) "1=1") &&
     (* > *)
     (check (not (NZero > NZero)) "0!>0") &&
-    (check (Nat one > NZero) "1>0") &&
-    (check (not (NZero > Nat one)) "0!>1") &&
-    (check (not (Nat one > Nat one)) "1!>1") &&
+    (check (Nat.one > NZero) "1>0") &&
+    (check (not (NZero > Nat.one)) "0!>1") &&
+    (check (not (Nat.one > Nat.one)) "1!>1") &&
     (* < *)
     (check (not (NZero < NZero)) "0!<0") &&
-    (check (not (Nat one < NZero)) "1!<0") &&
-    (check (NZero < Nat one) "0<1") &&
-    (check (not (Nat one < Nat one)) "1!<1") &&
+    (check (not (Nat.one < NZero)) "1!<0") &&
+    (check (NZero < Nat.one) "0<1") &&
+    (check (not (Nat.one < Nat.one)) "1!<1") &&
     (* inc *)
-    (check (inc NZero == Nat one) "++0 = 1") &&
-    (check (inc (Nat one) == Nat (Cnt.S one)) "++1 = 2") &&
+    (check (inc NZero == Nat.one) "++0 = 1") &&
+    (check (inc (Nat.one) == Nat.two) "++1 = 2") &&
     (* save some time *)
-    let one = Nat one in
-    let two = inc one in
-    let three = inc two in
     let six = inc (inc (inc three)) in
     let cthree = Nat.as_cnt three in
     let csix = Nat.as_cnt six in
@@ -116,8 +113,13 @@ let test_nat =
     (check ((q == NZero) && (r == two)) "2=0*3+2") &&
     let q, r = euc two six in
     (check ((q == NZero) && (r == two)) "2=0*6+2") &&
+    let q, r = euc Nat.twentytwo Nat.seven in
+    (check ((q == Nat.three) && (r == Nat.one)) "22=3*7+1") &&
     (* stringing *)
-    (check ((to_str NZero) = "0") "str 0")
+    (check ((to_str NZero) = "0") "str 0") &&
+    (check ((to_str six) = "6") "str 6") &&
+    (check ((to_str twentytwo) = "22") "str 22") &&
+    (check ((to_str (six * six)) = "36") "str 36")
 
 
 let test_int =
@@ -215,6 +217,7 @@ let test_int =
     (check (nt // nt == po) "-2 // -2 == 1") &&
     (check (no // nt == z) "-1 // -2 == 0") &&
     (check (nt // po == nt) "-2 // 1 == -2") &&
+    (check (Int.twentytwo // Int.seven == Int.three) "22 // 7 == 3") &&
     (check ((nt + nt) // nt == pt) "-4 // -2 == 2") &&
     (* modulo (or is this remainder?) *)
     (raises (lazy (po % z == z)) "0 % 1 !") &&
@@ -256,7 +259,15 @@ let test_rat =
     (check (least_terms two == two) "2/1=2/1") &&
     (check (least_terms ntwo == ntwo) "-2/1=-2/1") &&
     (check (least_terms sith == two) "6/3=2/1") &&
-    (check (least_terms nsith == ntwo) "-6/3=-2/1")
+    (check (least_terms nsith == ntwo) "-6/3=-2/1") &&
+    (* floor *)
+    let x = (floor (Int.twentytwo, Cnt.seven)) in
+    (check Int.(x == Int.three) "_22/7_=3") &&
+    (* dec str *)
+    (check (to_dec_str one = "1.") "str 1/1") &&
+    (check ((to_dec_str (Int.twentytwo, Cnt.seven)) = "3.142857") "str 22/7") &&
+    (check (to_dec_str ~prec:(Nat.ten) (Int.twentytwo, Cnt.seven) = "3.1428571428") "str 22/7")
+
 
 let _ =
     match test_cnt && test_nat && test_int && test_rat with
