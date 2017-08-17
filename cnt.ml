@@ -51,9 +51,22 @@ let rec ( == ) (a : cnt) (b : cnt) : bool =
 
 let ( >= ) a b = not (a < b)
 
+
+let rec to_tally_str ?(acc="") c =
+    match c with
+    | One -> acc ^ "O"
+    | S x -> to_tally_str ~acc:(acc^"|") x
+
+
+let one = One
 let two = S One
+let three = S (S One)
 let four = S (S (S One))
 let five = S (S (S (S One)))
 let six = S (S (S (S (S One))))
+let seven = S (S (S (S (S (S One)))))
 let eight = S (S (S (S (S (S (S One))))))
+let nine = S (S (S (S (S (S (S (S One)))))))
+let ten = S (S (S (S (S (S (S (S (S One))))))))
 let sixteen = S (S (S (S (S (S (S (S (S (S (S (S (S (S (S One))))))))))))))
+let twentytwo = S (S (S (S (S (S (S (S (S (S (S (S (S (S (S (S (S (S (S (S (S One))))))))))))))))))))

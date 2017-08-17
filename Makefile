@@ -1,5 +1,5 @@
 OCAMLC=ocamlopt
-FLAGS=-w +A-4-44-48
+FLAGS=-O3 -w +A-4-44-48
 LIB_MLS=cnt.ml nat.ml int.ml util.ml rat.ml
 
 

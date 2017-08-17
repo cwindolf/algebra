@@ -109,12 +109,20 @@ let rec to_str x : string =
     | Nat S S S S S S One -> "7"
     | Nat S S S S S S S One -> "8"
     | Nat S S S S S S S S One -> "9"
-    | x -> let q, r = euc ten x in (to_str q) ^ (to_str r)
+    | _ -> (match euc x ten with
+            | NZero, r -> to_str r
+            | q, r -> to_str q ^ to_str r)
 
 let as_cnt n =
     match n with
     | Nat c -> c
     | NZero -> failwith "Bad Nat.as_cnt"
 
+let one = Nat Cnt.one
 let two = Nat Cnt.two
+let three = Nat Cnt.three
+let six = Nat Cnt.six
+let seven = Nat Cnt.seven
+let ten = Nat Cnt.ten
+let twentytwo = Nat Cnt.twentytwo
 let sixteen = Nat Cnt.sixteen

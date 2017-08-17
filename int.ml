@@ -157,3 +157,6 @@ let one = Pos Cnt.One
 let two = Pos (S Cnt.One)
 let three = Pos (S (S Cnt.One))
 let four = Pos (S (S (S Cnt.One)))
+let seven = Pos Cnt.seven
+let ten = Pos Cnt.ten
+let twentytwo = Pos Cnt.twentytwo

@@ -40,8 +40,12 @@ let ( * ) (a, b : rat) (c, d : rat) : rat =
 
 
 let of_int (i : int) : rat =
-    (* The ususal embedding. *)
     i, One
+
+
+let of_nat : Nat.nat -> rat = function
+      Nat.NZero -> IZero, One
+    | Nat.Nat c -> Pos c, One
 
 
 let abs (p, q : rat) =
@@ -51,10 +55,10 @@ let abs (p, q : rat) =
 
 
 let floor (a, b : rat) : int =
-    Int.((Pos b) * (a // (Pos b)))
+    Int.(a // (Pos b))
 
 
-let frac (p : rat) : rat = 
+let frac (p : rat) : rat =
     (* This might not always be what you want for negative numbers,
      * but it helps with printing.
      * e.g. frac -3.14 = .14 *)
@@ -66,15 +70,21 @@ let to_frac_str (r : rat) : string =
     (Int.to_str p) ^ "/" ^ (Int.to_str (Pos q))
 
 
-let to_dec_str ?(prec = (S (S One))) (r : rat) : string =
+let to_dec_str ?(prec = Nat.six) (r : rat) : string =
+    let rec dec_part rem i acc =
+        match rem, i with
+        | (IZero, _), _ | _, Nat.NZero -> acc
+        | (x, denom), _ -> dec_part 
+            (Int.((ten * x) % (ten * Pos denom)), denom)
+            (Nat.dec i)
+            (acc ^ Int.(to_str ((x // Pos denom) % ten))) in
     (* Print whole integer part and `prec` places of fractional part. *)
     (Int.to_str (floor r))
     ^ "."
-    ^ (Int.to_str (floor @@ (frac r) * (of_int (Pos prec))))
+    ^ (dec_part ((Int.ten, One) * (frac r)) prec "")
 
 
-let print r = r |> to_dec_str |> print_endline
-
+let print r = r |> to_frac_str |> print_endline
 
 let one = Int.one, Cnt.One
 let two = Int.two, Cnt.One
